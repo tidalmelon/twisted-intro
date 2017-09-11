@@ -1,9 +1,5 @@
-from twisted.internet import pollreactor
-pollreactor.install()
-
-from twisted.internet import reactor
-reactor.run()
-
+1, reactor并不会因为回调函数中出现失败（虽然它会报告异常）而停止运行。
+2, reactor循环并不会消耗任何CPU的资源。
 
 # linux
 # select: 有fd上限
