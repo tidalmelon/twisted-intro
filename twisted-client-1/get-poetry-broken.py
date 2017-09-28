@@ -68,6 +68,13 @@ class PoetrySocket(object):
         from twisted.internet import reactor
         reactor.addReader(self)
 
+        #1.这个客户端并不没有选择非阻塞式的socket
+        #2.doRead回调方法在socket关闭连接前一直在不停地读socket
+        # 我们尽管遭受了使用select的复杂但却没有享受到其带来的异步优势
+
+        #当我们遇到计算型的任务（长时间占用CPU），最好是将任务切成若干个部分执行以让I/O操作尽可能地执行
+
+
     def fileno(self):
         try:
             return self.sock.fileno()

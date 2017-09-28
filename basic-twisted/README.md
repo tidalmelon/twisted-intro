@@ -11,3 +11,6 @@
 
 >twisted.internet.pollreactor
 >twisted.internet.epollreactor
+
+# reactor 异常处理的有点 python basic-twisted/exception.py
+1. 任何一个回调函数异常，不会被带到reactor循环中
