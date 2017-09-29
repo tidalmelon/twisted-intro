@@ -92,7 +92,7 @@ class PoetrySocket(object):
         #removeReader和getReaders
         # 还有与我们客户端使用的Readers的APIs类同的Writers的APIs
         # 读和写有各自的APIs是因为select函数需要分开这两种事件（读或写可以进行的文件描述符）
-        # 可以等待即能读也能写的文件描述符 (类似grpc中读写流的实现？grpc是http协议的啊？？)
+        # 可以等待即能读也能写的文件描述符 (类似grpc基于http协议既然也实现了读写流-？？？不解)
 
         # see if there are any poetry sockets left
         for reader in reactor.getReaders():
