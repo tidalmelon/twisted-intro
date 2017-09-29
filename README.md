@@ -40,12 +40,12 @@
 
 好了， 我们上面所说的其实就是twisted：健壮，跨平台实现了reactor模式，并包含很多附加功能。
 
-## [第三部分：初次认识Twisted](https://github.com/tidalmelon/twisted-intro/tree/master/basic-twisted)
+# [第三部分：初次认识Twisted](https://github.com/tidalmelon/twisted-intro/tree/master/basic-twisted)
 
 1. reactor并不会因为回调函数中出现失败（虽然它会报告异常）而停止运行。
 2. reactor循环并不会消耗任何CPU的资源。
 
-# linux 几种IO多路复用简略
+### linux 几种IO多路复用简略
 1. select: 有fd上限
 2.  poll:  本质上与select无区别， 无fd上限
 3.  epoll：
@@ -58,6 +58,6 @@ reactor是单例模式的，即在一个程序中只有一个reactor。
 >twisted.internet.pollreactor
 >twisted.internet.epollreactor
 
-# reactor 异常处理的有点 python basic-twisted/exception.py
+0. reactor 异常处理的有点 python basic-twisted/exception.py
 1. 任何一个回调函数异常，不会被带到reactor循环中
 
