@@ -9,8 +9,11 @@
 >> 2, 有连接上限，但很大，1G内存可以打开10万fd。2G=20万fd
 >> 3, 支持水平触发，边缘触发（它只告诉进程哪些fd处于需态, 类似于事件?）
 
+reactor是单例模式的，即在一个程序中只有一个reactor。
+
 >twisted.internet.pollreactor
 >twisted.internet.epollreactor
 
 # reactor 异常处理的有点 python basic-twisted/exception.py
 1. 任何一个回调函数异常，不会被带到reactor循环中
+
