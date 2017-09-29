@@ -6,7 +6,7 @@
 
 ---
 
-# 第二部分：异步编程初探与reactor模式
+# [第二部分：异步编程初探与reactor模式](https://github.com/tidalmelon/twisted-intro/tree/master/async-client)
 
 ## 异步模式与同步模式的对比
 1. 异步模式客户端一次性与全部服务器完成链接，而不像同步模式那样一次只链接一个
@@ -39,4 +39,25 @@
 3. 提供你可以在抽象层外（reactor实现）使用的公共协议实现。
 
 好了， 我们上面所说的其实就是twisted：健壮，跨平台实现了reactor模式，并包含很多附加功能。
+
+## [第三部分：初次认识Twisted](https://github.com/tidalmelon/twisted-intro/tree/master/basic-twisted)
+
+1. reactor并不会因为回调函数中出现失败（虽然它会报告异常）而停止运行。
+2. reactor循环并不会消耗任何CPU的资源。
+
+# linux 几种IO多路复用简略
+1. select: 有fd上限
+2.  poll:  本质上与select无区别， 无fd上限
+3.  epoll：
+>> 1, 事件注册，性能最高
+>> 2, 有连接上限，但很大，1G内存可以打开10万fd。2G=20万fd
+>> 3, 支持水平触发，边缘触发（它只告诉进程哪些fd处于需态, 类似于事件?）
+
+reactor是单例模式的，即在一个程序中只有一个reactor。
+
+>twisted.internet.pollreactor
+>twisted.internet.epollreactor
+
+# reactor 异常处理的有点 python basic-twisted/exception.py
+1. 任何一个回调函数异常，不会被带到reactor循环中
 
