@@ -67,6 +67,7 @@ class PoetrySocket(object):
         #2. logPrefix()----> ILooggingContext
         #3. addReader() -----> IReactorFDSet
         #4. addReader(reader) ----> IreadDescriptor(IFileDescriptor(ILooggingContext))
+	    # IreadDescriptor:一个可以读取字节的文件描述符
         #5. doRead ---> IreadDescriptor
 
         ## 这里没有使用继承，而是直接给出了方法实现---duck typing
