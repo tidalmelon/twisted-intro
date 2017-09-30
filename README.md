@@ -80,7 +80,7 @@ removeReader和getReaders
 读和写有各自的APIs是因为select函数需要分开这两种事件（读或写可以进行的文件描述符）
 可以等待即能读也能写的文件描述符 (类似grpc基于http协议既然也实现了读写流-？？？不解)
 
-# 第五部分： 由twisted支持的诗歌客户端
+# [第五部分： 由twisted支持的诗歌客户端](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-2/get-poetry.py)
 
 twisted-1的提升空间：
 1. 客户端竟然有创建网络端口并接收数据这样枯燥的代码，twisted理应为我们实现这些例程性功能, 
