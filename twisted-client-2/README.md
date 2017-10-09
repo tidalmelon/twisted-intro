@@ -76,3 +76,8 @@ Protocol创立后的第二步：通过makeConnection与Transport联系起来。
 [make transport](http://s4.sinaimg.cn/middle/704b6af749e993f5e6453&690)
 
 # to do: http://blog.sina.com.cn/s/blog_704b6af70100q2ac.html
+
+
+
+
+

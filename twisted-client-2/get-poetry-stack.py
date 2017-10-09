@@ -53,6 +53,13 @@ class PoetryProtocol(Protocol):
     task_num = 0
 
     def dataReceived(self, data):
+        # err log:
+        # File: .../twisted/internet/tcp.py line 463, in doRead # Note the doRead callback return self.protocol.dataReceived(data)
+        #  有我们在1.0版本客户端的doRead回调函数
+        # 我们前面也提到过，Twisted在建立新抽象层进会使用已有的实现而不是另起炉灶
+        # 因此必然会有一个IReadDescriptor的实例在辛苦的工作，它是由Twisted代码而非我们自己的代码来实现 
+        # 如果你表示怀疑，那么就看看twisted.internet.tcp中的实现吧。如果你浏览代码会发现，由同一个类实现了IWriteDescriptor与ITransport。
+        # 因此 IreadDescriptor实际上就是变相的Transport类
         traceback.print_stack()
         os._exit(0)
 
