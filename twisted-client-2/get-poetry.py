@@ -62,6 +62,12 @@ class PoetryProtocol(Protocol):
         print  msg % (self.task_num, len(data), self.transport.getPeer())
 
     def connectionLost(self, reason):
+        # 当transport的连接关闭时，conncetionLost回调会被激活。
+        # reason参数是一个twisted.python.failure.Failure的实例对象，其携带的信息能够说明连接是被安全的关闭还是由于出错被关闭的
+        # 我们的客户端因认为总是能完整地下载完诗歌而忽略了这一参数。
+        # 工厂会在所有的诗歌都下载完毕后关闭reactor
+
+        # 再次重申：我们代码的工作就是用来下载诗歌-这意味我们的PoetryClientFactory缺少复用性。我们将在下一部分修正这一缺陷
         self.poemReceived(self.poem)
 
     def poemReceived(self, poem):
@@ -115,8 +121,13 @@ class PoetryClientFactory(ClientFactory):
         if task_num is not None:
             self.poems[task_num] = poem
 
+        # poem_finish回调函数是如何通过跟踪剩余诗歌数的
+        # 如果我们采用多线程以让每个线程分别下载诗歌，这样我们就必须使用一把锁来管理这段代码以免多个线程在同一时间调用poem_finish
+        # 但是在交互式体系下就不必担心了。由于reactor只能一次启用一个回调。新的客户端实现在处理错误上也比先前的优雅的多
+
         self.poetry_count -= 1
 
+        # 工厂会在所有的诗歌都下载完毕后关闭reactor
         if self.poetry_count == 0:
             self.report()
             from twisted.internet import reactor
@@ -127,6 +138,9 @@ class PoetryClientFactory(ClientFactory):
             print 'Task %d: %d bytes of poetry' % (i, len(self.poems[i]))
 
     def clientConnectionFailed(self, connector, reason):
+        # 回调是在工厂内部而不是协议内部实现 
+        # 由于协议是在连接建立后才创建的，而工厂能够在连接未能成功建立时捕获消息
+
         print 'Failed to connect to:', connector.getDestination()
         self.poem_finished()
 
