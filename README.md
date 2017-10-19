@@ -155,9 +155,9 @@ Protocol创立后的第二步：通过makeConnection与Transport联系起来。
 前面的客户端保持一致。相反我们的代码没有必要这样做。因为我们没有向服务器发送任何消息。
 也没有必要知道服务器的任何信息了。
 
-[make protoco](http://s8.sinaimg.cn/middle/704b6af749e993c8ccba7&690)
+![make protoco](http://s8.sinaimg.cn/middle/704b6af749e993c8ccba7&690)
 
-[make transport](http://s4.sinaimg.cn/middle/704b6af749e993f5e6453&690)
+![make transport](http://s4.sinaimg.cn/middle/704b6af749e993f5e6453&690)
 
 
 err log:
@@ -190,5 +190,5 @@ def get_poetry(host, port, callback):
        """
 
 
-
+![alt text](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-3/reactor-poem-callback.png)
 
