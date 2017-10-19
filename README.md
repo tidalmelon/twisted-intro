@@ -170,4 +170,25 @@ File: .../twisted/internet/tcp.py line 463, in doRead # Note the doRead callback
 
 版本2的客户端使用的抽象对于那些Twisted高手应该非常熟悉。如果仅仅是为在命令行上打印出下载的诗歌这个功能，那么我们已经完成了。但如果想使我们的代码能够复用，能够被内嵌在一些包含诗歌下载功能并可以做其它事情的大软件中，我们还有许多工作要做
 
-# [第六部分： 更加抽象的利用twisted](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-2/get-poetry.py)
+# [第六部分： 更加抽象的利用twisted](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-3/get-poetry.py)
+打造可以复用的诗歌下载客户端
+最新版本（2.0）客户端使用了Transports, Protocols, ProtocolFactory, 即整个twisted的网络框架。
+2.0版本的只能在命令行里下载诗歌：
+    1.PoetryClientFactory不仅要下载诗歌。
+    2.还要在诗歌下载完后，关闭程序,但这是份外工作，
+期望PoetryClientFactory的功能应该是：
+    1. 生成PoetryProtocol的实例 
+    2. 收集下载完毕的诗歌
+同步API：
+def get_poetry(host, port):
+    return poem from host:port
+使用回调解决问题。
+异步API：
+def get_poetry(host, port, callback):
+       """
+       download poem from host:port and invoke callback(poem) when the poem is complete
+       """
+
+
+
+

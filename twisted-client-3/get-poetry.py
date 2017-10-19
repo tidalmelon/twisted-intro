@@ -64,6 +64,15 @@ class PoetryProtocol(Protocol):
 
 
 class PoetryClientFactory(ClientFactory):
+    """
+    1. 工厂不负责关闭reactor，因此简单多了
+    2. 去除了处理链接失败的工作。 (后面我们会改正这一点)
+
+    通过这一改动：get_poetry, PoetryClientFactory,PoetryProtocol 类完全可以复用了。
+    他们仅仅与诗歌下载有关。所有启动reactor，关闭reactor的逻辑都在main中实现。
+
+    可以嵌入到任何模块中--可复用。
+    """
 
     protocol = PoetryProtocol
 
