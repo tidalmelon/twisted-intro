@@ -192,3 +192,77 @@ def get_poetry(host, port, callback):
 
 ![alt text](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-3/reactor-poem-callback.png)
 
+回调**链**, 
+即交互式的编程方式不会在我们的代码处止步，我们的回调函数可能还会回调其他人实现的代码，即交互式不会止于我们的代码。
+当你选择twisted实现你的工厂时，务必记住：
+i am going to use twisted
+**i am going to structure my program as a series of asynchronous callback chain invocations powered by a reactor loop!**
+**我将要构造我的程序 <- 由一系列的异步回调链 <- 被reactor调用**
+
+如果你的程序原来就是异步方式，那么使用twisted再好不过。
+如果不是异步的，那么我们需要对原有代码做大的改写。
+
+简单的将同步与异步程序混合在一起是不行的。
+
+twisted 与 pyGTK pyQT这两个基于reactor的GUI实现了很好的交互性。
+
+
+异常处理的问题：
+如果我们让3.0到一个不存在的服务器上下载诗歌，那么不是像1.0版本那样立刻程序崩溃掉而是永远处于等待中。
+clientConnectionFailed回调仍然会被调用，但其在ClientFactory基类中也没什么实现[这个函数是空的]（若子类没有重写基类，则使用基类）
+get_poem回调永远不会激活，这样reactor也不会停止。
+
+“”“
+丫丫的：终于理解为啥叫twisted（扭曲的）
+“”“
+
+**问题的提出**
+链接失败的信息会通过clientConnectionFailed函数传递给工厂。
+1， 工厂需要设计成可复用的，因此如何处理这个错误是依赖于工厂所使用的场景的。【在一些应用中，丢失诗歌时糟糕的，但在另外一些场景，我们只是尽量，不行就从其他地方下载】
+    换句话说：使用get_poetry的人需要知道何时会出现这些问题。而不仅仅是什么情况下会正常运行。
+2， 在一个同步程序中，get_poetry可能会抛出一个异常并调用try/except来处理异常。
+    但在异步程交互中，错误信息也必须异步的传递出去。
+    **总之再取得get_poetry之前，我们是不会发现链接失败这种错误的**
+
+实现1：
+def get_poetry(host, port, callback):
+    if poem:
+        callback(poem)
+    elif None:
+        callback(None)
+通过检查回调函数的参数来判断我们是否已经完成下载。
+存在问题：
+    1， None表示失败有些牵强
+    2， None可能会是返回值，而不是错误状态
+    3,  None携带的信息太少，不能告诉我们出了什么错误，堆栈信息
+def get_poetry(host, port, callback):
+    if poem:
+        callback(poem)
+    elif exception:
+        callback(err)
+使用exception已经很接近我们的异步程序了。
+
+twisted含有一个抽象类，称作Failure。如果有异常的话，能捕获**Exception**和**跟踪栈**。
+转：twisted-failure/failure-examples.py
+
+def get_poetry(host, port, callback):
+    if poem:
+        callback(poem)
+    elif Failure:
+        callback(err)
+
+又存在的问题：
+**使用相同的回调函数处理正常的与不正常的结果是一件莫名其妙的事情。** 通常情况下我们处理失败信息，与处理成功信息要进行不同的操作。
+同步编程中，我们经常使用try/except对失败与成功采用不同的路径。
+
+
+
+
+
+
+
+
+
+
+
+

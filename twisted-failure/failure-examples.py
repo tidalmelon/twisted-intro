@@ -38,3 +38,20 @@ except:
 
 # This failure saved both the exception and the traceback
 print failure
+
+# 第一个仅有异常，无堆栈信息
+# 第二个有异常，和跟踪栈信息。
+
+#Just making an exception:
+#
+#[Failure instance: Traceback (failure with no frames): <class '__main__.RhymeSchemeViolation'>: 
+#]
+#
+#
+#Catching an exception:
+#
+#[Failure instance: Traceback: <class '__main__.RhymeSchemeViolation'>: 
+#--- <exception caught here> ---
+#failure-examples.py:34:<module>
+#failure-examples.py:26:analyze_poem
+#]
