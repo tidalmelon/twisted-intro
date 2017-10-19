@@ -255,6 +255,14 @@ def get_poetry(host, port, callback):
 **使用相同的回调函数处理正常的与不正常的结果是一件莫名其妙的事情。** 通常情况下我们处理失败信息，与处理成功信息要进行不同的操作。
 同步编程中，我们经常使用try/except对失败与成功采用不同的路径。
 
+因此：
+def get_poetry(host, port, callback, errback):
+    if poem:
+        callback(poem)
+    elif Failure:
+        errback(err)
+
+
 
 
 
