@@ -243,7 +243,7 @@ def get_poetry(host, port, callback):
 使用exception已经很接近我们的异步程序了。
 
 twisted含有一个抽象类，称作Failure。如果有异常的话，能捕获**Exception**和**跟踪栈**。
-转：twisted-failure/failure-examples.py
+转：[twisted-failure/failure-examples.py](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-failure/failure-examples.py)
 
 def get_poetry(host, port, callback):
     if poem:
