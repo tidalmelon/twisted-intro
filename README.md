@@ -80,7 +80,7 @@ removeReader和getReaders
 读和写有各自的APIs是因为select函数需要分开这两种事件（读或写可以进行的文件描述符）
 可以等待即能读也能写的文件描述符 (类似grpc基于http协议既然也实现了读写流-？？？不解)
 
-# [第五部分： 由twisted支持的诗歌客户端](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-2/get-poetry.py)
+# [第五部分： 由twisted扶持的诗歌客户端](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-2/get-poetry.py)
 
 twisted-1的提升空间：
 1. 客户端竟然有创建网络端口并接收数据这样枯燥的代码，twisted理应为我们实现这些例程性功能, 
@@ -159,5 +159,15 @@ Protocol创立后的第二步：通过makeConnection与Transport联系起来。
 
 [make transport](http://s4.sinaimg.cn/middle/704b6af749e993f5e6453&690)
 
-# to do: http://blog.sina.com.cn/s/blog_704b6af70100q2ac.html
 
+err log:
+File: .../twisted/internet/tcp.py line 463, in doRead # Note the doRead callback return self.protocol.dataReceived(data)
+有我们在1.0版本客户端的doRead回调函数
+我们前面也提到过，Twisted在建立新抽象层进会使用已有的实现而不是另起炉灶
+因此必然会有一个IReadDescriptor的实例在辛苦的工作，它是由Twisted代码而非我们自己的代码来实现 
+如果你表示怀疑，那么就看看twisted.internet.tcp中的实现吧。如果你浏览代码会发现，由同一个类实现了IWriteDescriptor与ITransport。
+因此 IreadDescriptor实际上就是变相的Transport类
+
+版本2的客户端使用的抽象对于那些Twisted高手应该非常熟悉。如果仅仅是为在命令行上打印出下载的诗歌这个功能，那么我们已经完成了。但如果想使我们的代码能够复用，能够被内嵌在一些包含诗歌下载功能并可以做其它事情的大软件中，我们还有许多工作要做
+
+# [第六部分： 更加抽象的利用twisted](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-2/get-poetry.py)

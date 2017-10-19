@@ -75,9 +75,12 @@ Protocol创立后的第二步：通过makeConnection与Transport联系起来。
 
 [make transport](http://s4.sinaimg.cn/middle/704b6af749e993f5e6453&690)
 
-# to do: http://blog.sina.com.cn/s/blog_704b6af70100q2ac.html
-
-
+err log:
+File: .../twisted/internet/tcp.py line 463, in doRead # Note the doRead callback return self.protocol.dataReceived(data)
+有我们在1.0版本客户端的doRead回调函数
+我们前面也提到过，Twisted在建立新抽象层进会使用已有的实现而不是另起炉灶
+因此必然会有一个IReadDescriptor的实例在辛苦的工作，它是由Twisted代码而非我们自己的代码来实现 
+如果你表示怀疑，那么就看看twisted.internet.tcp中的实现吧。如果你浏览代码会发现，由同一个类实现了IWriteDescriptor与ITransport。
+因此 IreadDescriptor实际上就是变相的Transport类
 
 版本2的客户端使用的抽象对于那些Twisted高手应该非常熟悉。如果仅仅是为在命令行上打印出下载的诗歌这个功能，那么我们已经完成了。但如果想使我们的代码能够复用，能够被内嵌在一些包含诗歌下载功能并可以做其它事情的大软件中，我们还有许多工作要做
-
