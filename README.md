@@ -263,6 +263,10 @@ def get_poetry(host, port, callback, errback):
         errback(err)
 
 
+转-> [twisted-client-3/get-poetry-1.py](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-3/get-poetry-1.py)
+
+
+
 
 
 
