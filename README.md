@@ -266,6 +266,18 @@ def get_poetry(host, port, callback, errback):
 转-> [twisted-client-3/get-poetry-1.py](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-3/get-poetry-1.py)
 
 
+第六部分我们学到：
+2， 我们为twisted程序写的API必须是异步的
+3， 不能讲同步代码与异步代码混合起来使用
+4， 我们可以在自己的代码中写异步函数，正如twisted所做的那样
+5， 并且我们需要些**处理错误信息的回调函数**
+
+
+使用twisted时，难道都需要加上两个额外的参数：callback，errcallback？ twisted引进了defferred。
+
+
+
+
 
 
 
