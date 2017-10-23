@@ -97,12 +97,9 @@ def get_poetry(host, port, callback, errback):
 
 def poetry_main():
     addresses = parse_args()
-
     from twisted.internet import reactor
-
     poems = []
     errors = []
-
     def got_poem(poem):
         poems.append(poem)
         poem_done()
