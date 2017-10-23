@@ -610,3 +610,4 @@ Deferred还有很多细节，但对于使用它来重构我们的客户端已经
 
 
 
+![aysn-asyn](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-4/sync-async.png)
