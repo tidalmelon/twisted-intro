@@ -51,3 +51,21 @@ reactor.callWhenRunning(fire)
 print 'Starting reactor.'
 reactor.run()
 print 'Done.'
+
+
+#Starting reactor.
+#Firing deferred.
+#The start of the callback chain.
+#
+#I block
+#  and the deferred
+#  blocks with me
+#as does
+# the reactor
+#keep that
+# factor
+#in mind
+#
+#The end of the callback chain.
+#Firing finished.
+#Done.

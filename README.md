@@ -610,8 +610,55 @@ Deferred还有很多细节，但对于使用它来重构我们的客户端已经
 
 
 
+
+
+![reactor-deferred-callback](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-4/reactor-deferred-callback.png)  
+
+callback链直到第二个回调poem_done激活前才将控制权还给reactor  
+
+![3-4duibi](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-4/3-4duibi.png)
+
+Deferred被激活后是如何销毁其引用的：  
+1, 这样做可以保证我们不激活一个deferred两次  
+2， python的垃圾回收带来方便
+```
+if self.deferred is not None:
+    d, self.deferred = self.deferred, None
+    d.callback(poem)
+
+```
+
+**讨论**  
+同步版本返回诗歌内容
+异步版本返回deferred：**一个Deferred代表了一个“异步的结果” or “结果还没有返回”**  
+异步函数返回一个deferred：
+我是一个异步函数，不管你想要什么，可能现在马上都得不到。  
+但当结果来到时，我会激活这个deferred的callback链并返回结果，  
+或者当出错时，相应的激活errback链，并返回出错信息。  
+**deferred是为适应异步模式的一中延迟函数返回的方式: 函数返回一个deferred意味着其是异步的，代表着将来的结果，也是对将来能返回结果的一种承诺**  
+**同步函数也能返回deferred， 因此返回deferred只能说可能是异步的**
+
 ![aysn-asyn](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-4/sync-async.png)
 
+Deferred的好处：deferred的行为已经很好的定义与理解，因此实现自己的api时返回一个deferred更容易让其它的twisted程序员理解你的代码  
+                如果没有deferred，可能每个人写的模块都使用不同的方式来处理回调->这增加了**相互理解**的工作量。
 
-![reactor-deferred-callback](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-4/reactor-deferred-callback.png)
-![3-4duibi](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-4/3-4duibi.png)
+经常犯的一个错误：  
+会给deferred增加一些它本身不能实现的功能。  
+1， 在defferred上添加一个函数就会使其变成异步函数。--> 在twisted中回调函数中可以使用os.system  
+
+**异步是由reactor完成的，deferred是一个很好的抽象概念, 但大部分工作是reactor做的**
+
+
+
+通过使用deferred，我们在twisted中的reactor 启动过程中加入了一些自己的东西。但我们并没有改变异步编程 基础架构。回忆下回调编程的特点： 
+1， 在一个时刻，只会有一个回调在运行。  
+2， 当reactor代码运行时，那我们的代码则得不到运行。  
+3,  反之亦然  
+4， 如果我们的回调发生**阻塞**，那么整个程序就跟着阻塞了。  **在deferred上激活阻塞，那么整个程序亦然阻塞，deferred改变不了阻塞** [example](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-deferred/defer-block.py)
+
+总结： 
+1， 函数通过返回一个Deferred，向使用者暗示“我是采用异步方式的”并且当结果到来时会使用一种特殊的机制（在此处添加你的callback与errback）来获得返回结果。  
+2, 4.0版本客户端是第一个使用Deferred的Twisted版的客户端，其使用方法为在其异步函数中返回一个deferred来。可以使用一些Twisted的APIs来使客户端的实现更加清晰些，但我觉得它能够很好地体现出一个简单的Twisted程序是怎么写的了，至少对于客户端可以如此肯定
+
+
