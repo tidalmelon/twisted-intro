@@ -618,6 +618,8 @@ callback链直到第二个回调poem_done激活前才将控制权还给reactor
 
 ![3-4duibi](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-4/3-4duibi.png)
 
+#第八部分：使用Deferred的诗歌下载客户端
+
 Deferred被激活后是如何销毁其引用的：  
 1, 这样做可以保证我们不激活一个deferred两次  
 2， python的垃圾回收带来方便
