@@ -347,6 +347,7 @@ sys.exit()
 ![deferred](https://github.com/tidalmelon/twisted-intro/tree/master/twisted-deferred/callbackchains.png)
 
 ```
+1, 
 from twisted.internet.defer import Deferred
 
 def got_poem(res):
@@ -374,6 +375,205 @@ print "Finished"
 需要注意几个问题：
 1， 添加的是callback/errback对。
 2,  添加到deferred的回调函数允许多个参数，但第一个只能是正确的结果或错误信息
+
+```
+2
+from twisted.internet.defer import Deferred
+from twisted.python.failure import Failure
+
+def got_poem(res):
+    print 'Your poem is served:'
+    print res
+
+def poem_failed(err):
+    print 'No poetry for you.'
+
+d = Deferred()
+
+# add a callback/errback pair to the chain
+d.addCallbacks(got_poem, poem_failed)
+
+# fire the chain with an error result
+d.errback(Failure(Exception('I have failed.')))
+
+print "Finished"
+
+
+#No poetry for you.
+#Finished
+
+```
+
+```
+3
+from twisted.internet.defer import Deferred
+
+def got_poem(res):
+    print 'Your poem is served:'
+    print res
+
+def poem_failed(err):
+    print err.__class__
+    print err
+    print 'No poetry for you.'
+
+d = Deferred()
+
+# add a callback/errback pair to the chain
+d.addCallbacks(got_poem, poem_failed)
+
+# fire the chain with an error result
+d.errback(Exception('I have failed.'))
+
+#<class 'twisted.python.failure.Failure'>
+#[Failure instance: Traceback (failure with no frames): <type 'exceptions.Exception'>: I have failed.
+#]
+#No poetry for you.
+```
+
+```
+4
+from twisted.internet.defer import Deferred
+def out(s): print s
+d = Deferred()
+d.addCallbacks(out, out)
+d.callback('First result')
+d.callback('Second result')
+print 'Finished'
+
+
+#First result
+#Traceback (most recent call last):
+#  File "defer-4.py", line 6, in <module>
+#    d.callback('Second result')
+#  File "/usr/local/lib/python2.7/site-packages/twisted/internet/defer.py", line 459, in callback
+#    self._startRunCallbacks(result)
+#  File "/usr/local/lib/python2.7/site-packages/twisted/internet/defer.py", line 560, in _startRunCallbacks
+#    raise AlreadyCalledError
+#twisted.internet.defer.AlreadyCalledError
+
+```
+
+```
+5
+from twisted.internet.defer import Deferred
+def out(s): print s
+d = Deferred()
+d.addCallbacks(out, out)
+d.callback('First result')
+d.errback(Exception('First error'))
+print 'Finished'
+
+
+#First result
+#Traceback (most recent call last):
+#  File "defer-5.py", line 6, in <module>
+#    d.errback(Exception('First error'))
+#  File "/usr/local/lib/python2.7/site-packages/twisted/internet/defer.py", line 500, in errback
+#    self._startRunCallbacks(fail)
+#  File "/usr/local/lib/python2.7/site-packages/twisted/internet/defer.py", line 560, in _startRunCallbacks
+#    raise AlreadyCalledError
+#twisted.internet.defer.AlreadyCalledError
+
+```
+
+
+```
+6
+from twisted.internet.defer import Deferred
+def out(s): print s
+d = Deferred()
+d.addCallbacks(out, out)
+d.errback(Exception('First error'))
+d.errback(Exception('Second error'))
+print 'Finished'
+
+#[Failure instance: Traceback (failure with no frames): <type 'exceptions.Exception'>: First error
+#]
+#Traceback (most recent call last):
+#  File "defer-6.py", line 6, in <module>
+#    d.errback(Exception('Second error'))
+#  File "/usr/local/lib/python2.7/site-packages/twisted/internet/defer.py", line 500, in errback
+#    self._startRunCallbacks(fail)
+#  File "/usr/local/lib/python2.7/site-packages/twisted/internet/defer.py", line 560, in _startRunCallbacks
+#    raise AlreadyCalledError
+#twisted.internet.defer.AlreadyCalledError
+
+```
+
+
+
+```
+7
+from twisted.internet.defer import Deferred
+def out(s): print s
+d = Deferred()
+d.addCallbacks(out, out)
+d.errback(Exception('First error'))
+d.callback('First result')
+print 'Finished'
+
+
+#[Failure instance: Traceback (failure with no frames): <type 'exceptions.Exception'>: First error
+#]
+#Traceback (most recent call last):
+#  File "defer-7.py", line 6, in <module>
+#    d.callback('First result')
+#  File "/usr/local/lib/python2.7/site-packages/twisted/internet/defer.py", line 459, in callback
+#    self._startRunCallbacks(result)
+#  File "/usr/local/lib/python2.7/site-packages/twisted/internet/defer.py", line 560, in _startRunCallbacks
+#    raise AlreadyCalledError
+#twisted.internet.defer.AlreadyCalledError
+```
+
+
+```
+8
+import sys
+
+from twisted.internet.defer import Deferred
+
+def got_poem(poem):
+    print poem
+    from twisted.internet import reactor
+    reactor.stop()
+
+def poem_failed(err):
+    print >>sys.stderr, 'poem download failed'
+    print >>sys.stderr, 'I am terribly sorry'
+    print >>sys.stderr, 'try again later?'
+    from twisted.internet import reactor
+    reactor.stop()
+
+d = Deferred()
+
+d.addCallbacks(got_poem, poem_failed)
+
+from twisted.internet import reactor
+
+reactor.callWhenRunning(d.callback, 'Another short poem.')
+
+reactor.run()
+
+
+#Another short poem.
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 **deferred 会将Exceptin转化为Failure**
 **因此使用deferred时，我们可以正常的使用Exception**
