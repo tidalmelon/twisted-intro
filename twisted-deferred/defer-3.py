@@ -16,3 +16,8 @@ d.addCallbacks(got_poem, poem_failed)
 
 # fire the chain with an error result
 d.errback(Exception('I have failed.'))
+
+#<class 'twisted.python.failure.Failure'>
+#[Failure instance: Traceback (failure with no frames): <type 'exceptions.Exception'>: I have failed.
+#]
+#No poetry for you.

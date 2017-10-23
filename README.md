@@ -279,19 +279,10 @@ def get_poetry(host, port, callback, errback):
 
 # 第七部分： 小插曲,Deferred
 
-区别：
-1， poem_failed错误回调**必须携带Failure对象**是由我们自己的代码激活并调用的。即PeotryClientFactory的clientConnectFailed函数。是我们自己而不是python来确保出错时错误处理代码能够执行。
-2， try/except/else 保证了出错时程序可以关闭。 但如果我们忘记抛出异步异常（本程序中指PoetryClientFactory调用errback），我们的恒旭会一直运行下去，还开心的以为什么都不发生。
-
-所以： 在异步程序中处理错误是相当重要的，甚至有些严峻。
-       在异步程序中处理错误信息比处理正常的信息重要的多。原因：错误会以多种方式出现，而正确的结果只有一种。
-
-
-
-
 
 
 ```
+同步模式：
 try:
     poem = get_poetry(host, port)
 except Exception, err:
@@ -304,11 +295,108 @@ else:
     sys.exit()
 
 ```
+```
+异步模式：
+def got_poem(poem):
+    print poem
+    reactor.stop()
 
+def poem_failed(err):
+    print sys.stderr, 'poem downlaod failed'
+    print sys.stderr, 'i am terribly sorry'
+    print sys.stderr, 'try again later?'
+    reactor.stop()
 
+get_poetry(host, port, got_poem, poem_failed)
+reactor.run()
+    
+```
+区别：
+1, 异常控制：同步 异常由python解释器控制。异步 异常我们自己控制：即PeotryClientFactory的clientConnectFailed函数
+2, 关闭：python解释器自己关闭，而异步程序会一直运行下去
+3, 在异步程序中处理错误是相当重要的，甚至有些严峻。
+   在异步程序中处理错误信息比处理正常的信息重要的多。原因：错误会以多种方式出现，而正确的结果只有一种。
 
+存在问题：
+1， 同时调用了callback，errback , 或者激活callback27次。
+2， 同步异步都有重复代码。 sys.exit() reactor.stop()
 
+**重构同步代码**
 
+```
+同步模式：
+try:
+    poem = get_poetry(host, port)
+except Exception, err:
+    print sys.stderr, 'poem downlaod failed'
+    print sys.stderr, 'i am terribly sorry'
+    print sys.stderr, 'try again later?'
+else:
+    print poem
 
+sys.exit()
+```
+我们能这样重构异步代码么？
 
+异步编程的一些观点：
+1， 激活errback是非常重要的。由于errback的功能与except块相同，因此用户需要确认他们存在。他们不是可选项，而是必选项。
+2， 不在错误的时间点激活回调与在正确的时间点激活回调同等重要。典型的用法是：callback与errback是互斥的即只能运行其中一个。
+3， 使用回调函数的代码重构起来困难些。
+
+**为什么使用deferred抽象机制来管理回调**
+![deferred](https://github.com/tidalmelon/twisted-intro/tree/master/twisted-deferred/callbackchains.png)
+
+```
+from twisted.internet.defer import Deferred
+
+def got_poem(res):
+    print 'Your poem is served:'
+    print res
+
+def poem_failed(err):
+    print 'No poetry for you.'
+
+d = Deferred()
+
+# add a callback/errback pair to the chain
+d.addCallbacks(got_poem, poem_failed)
+
+# fire the chain with a normal result
+d.callback('This poem is short.')
+
+print "Finished"
+
+#Your poem is served:
+#This poem is short.
+#Finished
+
+```
+需要注意几个问题：
+1， 添加的是callback/errback对。
+2,  添加到deferred的回调函数允许多个参数，但第一个只能是正确的结果或错误信息
+
+**deferred 会将Exceptin转化为Failure**
+**因此使用deferred时，我们可以正常的使用Exception**
+```
+from twisted.internet.defer import Deferred
+from twisted.python.failure import Failure
+
+def got_poem(res):
+    print 'Your poem is served:'
+    print res
+
+def poem_failed(err):
+    print 'No poetry for you.'
+
+d = Deferred()
+
+# add a callback/errback pair to the chain
+d.addCallbacks(got_poem, poem_failed)
+
+# fire the chain with an error result
+d.errback(Failure(Exception('I have failed.')))
+d.errback(Exception('I have failed.'))
+
+print "Finished"
+```
 

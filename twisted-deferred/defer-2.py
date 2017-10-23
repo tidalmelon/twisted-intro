@@ -17,3 +17,7 @@ d.addCallbacks(got_poem, poem_failed)
 d.errback(Failure(Exception('I have failed.')))
 
 print "Finished"
+
+
+#No poetry for you.
+#Finished
