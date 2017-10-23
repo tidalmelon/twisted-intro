@@ -404,6 +404,8 @@ print "Finished"
 
 ```
 
+**deferred 会将Exceptin转化为Failure**
+**因此使用deferred时，我们可以正常的使用Exception**
 ```
 3
 from twisted.internet.defer import Deferred
@@ -430,6 +432,8 @@ d.errback(Exception('I have failed.'))
 #]
 #No poetry for you.
 ```
+
+**deferred不允许别人激活他两次：解决了一个回调会被激活多次，如果非要调用多次，将会异常报错**
 
 ```
 4
@@ -526,6 +530,8 @@ print 'Finished'
 #twisted.internet.defer.AlreadyCalledError
 ```
 
+**callwhenrunning函数可以接受一个额外的参数给回调函数**
+**多数的twisted的API都以这样的方式注册回调函数**
 
 ```
 8
@@ -559,44 +565,48 @@ reactor.run()
 #Another short poem.
 ```
 
+**回调链的第二个回调**
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-**deferred 会将Exceptin转化为Failure**
-**因此使用deferred时，我们可以正常的使用Exception**
 ```
-from twisted.internet.defer import Deferred
-from twisted.python.failure import Failure
+9
+import sys
 
-def got_poem(res):
-    print 'Your poem is served:'
-    print res
+from twisted.internet.defer import Deferred
+
+def got_poem(poem):
+    print poem
 
 def poem_failed(err):
-    print 'No poetry for you.'
+    print >>sys.stderr, 'poem download failed'
+    print >>sys.stderr, 'I am terribly sorry'
+    print >>sys.stderr, 'try again later?'
+
+def poem_done(_):
+    from twisted.internet import reactor
+    reactor.stop()
 
 d = Deferred()
 
-# add a callback/errback pair to the chain
 d.addCallbacks(got_poem, poem_failed)
+d.addBoth(poem_done)
 
-# fire the chain with an error result
-d.errback(Failure(Exception('I have failed.')))
-d.errback(Exception('I have failed.'))
+from twisted.internet import reactor
 
-print "Finished"
+reactor.callWhenRunning(d.callback, 'Another short poem.')
+
+reactor.run()
+
+
+#Another short poem.
 ```
+
+总结 ：
+回调编程隐藏的问题，以及deferred如何帮我们解决。
+1， errback不能被忽略。 Deferred支持errback
+2， 激活多次可能会导致很严重的问题。deferred只能被激活一次，类似于try/except
+3,  含有回调的程序重构时相当困难。有了deferred，我们就**通过修改回调链**来重构程序
+
+Deferred还有很多细节，但对于使用它来重构我们的客户端已经足够了。
+
+
 
