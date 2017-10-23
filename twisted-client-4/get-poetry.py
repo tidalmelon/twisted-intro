@@ -115,6 +115,7 @@ def poetry_main():
     for address in addresses:
         host, port = address
         d = get_poetry(host, port)
+        # 第一个参数必须是成功的，或者err
         d.addCallbacks(got_poem, poem_failed)
         d.addBoth(poem_done)
 
