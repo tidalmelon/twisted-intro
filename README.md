@@ -344,7 +344,7 @@ sys.exit()
 3， 使用回调函数的代码重构起来困难些。
 
 **为什么使用deferred抽象机制来管理回调**
-![deferred](https://github.com/tidalmelon/twisted-intro/tree/master/twisted-deferred/callbackchains.png)
+![deferred](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-deferred/callbackchains.png)
 
 ```
 1, 
