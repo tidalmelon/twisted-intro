@@ -277,11 +277,33 @@ def get_poetry(host, port, callback, errback):
 
 
 
+# 第七部分： 小插曲,Deferred
+
+区别：
+1， poem_failed错误回调**必须携带Failure对象**是由我们自己的代码激活并调用的。即PeotryClientFactory的clientConnectFailed函数。是我们自己而不是python来确保出错时错误处理代码能够执行。
+2， try/except/else 保证了出错时程序可以关闭。 但如果我们忘记抛出异步异常（本程序中指PoetryClientFactory调用errback），我们的恒旭会一直运行下去，还开心的以为什么都不发生。
+
+所以： 在异步程序中处理错误是相当重要的，甚至有些严峻。
+       在异步程序中处理错误信息比处理正常的信息重要的多。原因：错误会以多种方式出现，而正确的结果只有一种。
 
 
 
 
 
+
+```
+try:
+    poem = get_poetry(host, port)
+except Exception, err:
+    print sys.stderr, 'poem downlaod failed'
+    print sys.stderr, 'i am terribly sorry'
+    print sys.stderr, 'try again later?'
+    sys.exit()
+else:
+    print poem
+    sys.exit()
+
+```
 
 
 
