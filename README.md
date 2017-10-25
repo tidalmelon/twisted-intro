@@ -717,9 +717,36 @@ def poetry_main():
     from twisted.internet import reactor
     poems = []
     def got_poem(poem):
-        #poems.append(byron_engine.byronificate(poem))
+        # 加一个功能：
+        #1.尝试下载诗歌
+        #2.如果下载失败，告诉用户没有得到诗歌
+        #3.如果下载到诗歌[scrapy的插件机制？？]，则转交给Byronificate处理引擎一份
+        #4.如果引擎抛出GibberishError，告诉用户没有得到诗歌
+        #5.如果引擎抛出其它异常，则将原始式样的诗歌立给用户
+        #6.如果我们得到这首诗歌，则打印它
+        #7.结束程序
 
+        # 用版本3.1（最后一个不适用deferred的客户端）
+        # 假设我们不需要处理异常，如下改动即可。
+        poems.append(byron_engine.byronificate(poem))
+        poem_done()
 ```
+
+byronificate抛出GibberishError异常或其它异常会**发生什么**呢？  
+ 1.这个异常会传播到工厂中的poem_finished回调，即激活got_poem的方法  
+ 2.由于poem_finished并没有捕获这个异常，因此其会传递到protocol中的poemReceive函数  
+ 3.然后来到connectionLost函数，仍然在protocol中  
+ 4.然后就来到Twisted的核心区，最后止步于reactor。 
+ 5 reactor会捕获异常并记录它而不是“崩溃”掉。但它却不会告诉用户我们的诗歌下载失败的消息。
+
+能在reactor解决么？ 
+reactor只是做一些具有普遍意义的事情，不会单独去处理特定的问题，例如这里原GibberishErrors异常  
+
+**注意异常是如何顺着调用链传递到具有通用性代码区域**
+** And at no step after got_poem is the exception in a piece of code that could be expected to handle an error in the specific way we want for this client.**  
+** 没有一步在get_poem以后，异常，在一代码块被期望处理，用特定的方法， 我们希望给这个客户端**  
+
+同步代码
 
 ![sync](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-deferred/sync-exceptions1.png)
 ![async](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-deferred/async-exceptions4.png)
