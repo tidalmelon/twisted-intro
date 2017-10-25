@@ -742,9 +742,9 @@ byronificate抛出GibberishError异常或其它异常会**发生什么**呢？
 能在reactor解决么？ 
 reactor只是做一些具有普遍意义的事情，不会单独去处理特定的问题，例如这里原GibberishErrors异常  
 
-**注意异常是如何顺着调用链传递到具有通用性代码区域**
+**注意异常是如何顺着调用链传递到具有通用性代码区域**  
 **And at no step after got_poem is the exception in a piece of code that could be expected to handle an error in the specific way we want for this client.**  
-** 没有一步在get_poem以后，异常，在一代码块被期望处理，用特定的方法， 我们希望给这个客户端**  
+**没有一步在get_poem以后，异常，在一代码块被期望处理，用特定的方法， 我们希望给这个客户端**  
 
 同步代码
 
