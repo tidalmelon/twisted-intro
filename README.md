@@ -665,3 +665,61 @@ Deferred的好处：deferred的行为已经很好的定义与理解，因此实�
 
 # 第九部分：第二个小插曲，Deferred  
 
+
+```
+try:
+    poem = get_poetry(host, port) # synchronous get_poetry
+except:
+    print >>sys.stderr, 'The poem download failed.'
+else:
+    try:
+        poem = engine.byronificate(poem)
+    except GibberishError:
+        print >>sys.stderr, 'The poem download failed.'
+    except:
+        print poem # handle other exceptions by using the original poem
+    else:
+        print poem
+sys.exit()
+
+```
+```
+class PoetryProtocol(Protocol):
+
+    poem = ''
+
+    def dataReceived(self, data):
+        self.poem += data
+
+    def connectionLost(self, reason):
+        self.poemReceived(self.poem)
+
+    def poemReceived(self, poem):
+        self.factory.poem_finished(poem)
+
+class PoetryClientFactory(ClientFactory):
+
+    protocol = PoetryProtocol
+
+    def __init__(self, callback):
+        self.callback = callback
+
+    def poem_finished(self, poem):
+        self.callback(poem)
+
+def get_poetry(host, port, callback):
+    from twisted.internet import reactor
+    factory = PoetryClientFactory(callback)
+    reactor.connectTCP(host, port, factory)
+
+def poetry_main():
+    addresses = parse_args()
+    from twisted.internet import reactor
+    poems = []
+    def got_poem(poem):
+        #poems.append(byron_engine.byronificate(poem))
+
+```
+
+![sync](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-deferred/sync-exceptions1.png)
+![async](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-deferred/async-exceptions4.png)
