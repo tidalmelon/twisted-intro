@@ -799,8 +799,8 @@ stage N+1： errback就会被调用（并且第一个参数为Failure）同时N+
 图-18  
 1. 激活stage-0的callback，无异常
 2. 控制权给了stage-1的callback。执行失败抛出异常。
-3. 控制权给了stage-2的errback。errback成功处理了异常，而没有再抛出异常    <font color=red>如何按我心意控制不抛出异常啊</font>
-4. 因此控制权给了stage-3的callback(p1)， 并且将**errback返回值**作为第一个参数p1传递进来.    <font color=red>怎么保证上一个errback的返回值适合这个callback啊</font>
+3. 控制权给了stage-2的errback。errback成功处理了异常，而没有再抛出异常    <font color=red>**如何按我心意控制不抛出异常啊**</font>
+4. 因此控制权给了stage-3的callback(p1)， 并且将**errback返回值**作为第一个参数p1传递进来.    <font color=red>**怎么保证上一个errback的返回值适合这个callback啊**</font>
 
 
 
