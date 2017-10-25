@@ -746,7 +746,20 @@ reactor只是做一些具有普遍意义的事情，不会单独去处理特定�
 **And at no step after got_poem is the exception in a piece of code that could be expected to handle an error in the specific way we want for this client.**  
 **没有一步在get_poem以后，异常，在一代码块被期望处理，用特定的方法， 我们希望给这个客户端**  
 
-同步代码
-
 ![sync](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-deferred/sync-exceptions1.png)
 ![async](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-deferred/async-exceptions4.png)
+
+同步代码:  
+main函数是最高层：用户输入参数，打印运算结果  
+socket的connect函数，恰恰相反为最低层： 它只知道链接到所提供的地址，他不知道另一端是啥，即我们为什么链接. connect具有通用性，不管何种服务要进行网络链接都可以使用他。 
+get_poetry在中间：他知道要取诗歌， 但不知道得不到诗歌会发生什么, 因此，从connect抛出的异常会向上传递，从低层的具有通用性的代码到高层的具有针对性的代码区。 直到传递到直到如何处理这个异常的代码区  
+
+
+异步代码； 
+reactor低层：调用高层的代码，甚至有些严峻还会调用更高层的代码。因此一旦出现异常，它并不会被其附件（在调用栈中可触及）的代码捕获，当然附件的代码也不可能处理他。
+            当然异常每向上传递一次，就越靠近低层那些更加不知道如何处理该异常的代码。一旦到了twisted核心代码，game is over，异常不会被处理，只是被记录下来。  
+因此我们以最原始的方式使用回调（不时deferred的形式），必须在其进入twisted之前正确的捕获每一个异常. 包含我们设计的异常（例如raise的）以及bug产生的。  
+**问题的提出：因为bug无处不在，因此我们需要在每个回调callback errback中放入try/except**
+
+**Deferred的优秀架构：解决**  
+
