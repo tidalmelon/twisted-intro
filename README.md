@@ -344,7 +344,8 @@ sys.exit()
 3， 使用回调函数的代码重构起来困难些。
 
 **为什么使用deferred抽象机制来管理回调**
-![deferred](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-deferred/callbackchains.png)
+![deferred](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-deferred/callbackchains.png)  
+<center>图-12</center>
 
 ```
 1, 
@@ -770,6 +771,10 @@ reactor低层：调用高层的代码，甚至有些严峻还会调用更高层�
 **将异常传递给链上的下一个errback：即本次抛出的异常由下一层处理**
 
 第一个回调：来处理任何出错信息，信息是deferred的errback被调用时发出的.参看： [参看](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-4/get-poetry.py)  
+第二个errback会处理第一个errback 或者 第一个callback抛出的异常。并一直按这种规律传递下去。  
+
+stage N：callback errback出错
+stage N+1： errback就会被调用（并且第一个参数为Failure）同时N+1的callback不会被调用了。
 
 
 
