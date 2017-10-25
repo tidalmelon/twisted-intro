@@ -802,7 +802,58 @@ stage N+1： errback就会被调用（并且第一个参数为Failure）同时N+
 3. 控制权给了stage-2的errback。errback成功处理了异常，而没有再抛出异常    <font color=red>**如何按我心意控制不抛出异常啊**</font>
 4. 因此控制权给了stage-3的callback(p1)， 并且将**errback返回值**作为第一个参数p1传递进来.    <font color=red>**怎么保证上一个errback的返回值适合这个callback啊**</font>
 
+可以看出：上一次的回调（callback errback）出现异常都由下一层的errback来处理（第一个参数）  
+那如果是最后一个stage的（callback，errback执行失败）而抛出异常呢？ 那么这个异常就会变为unhandled（未处理） 详见 [twisted-deferred/deferred-unhandled.py](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-deferred/defer-unhandled.py)
+
+```
+from twisted.internet.defer import Deferred
+
+def callback(res):
+    raise Exception('oops')
+
+d = Deferred()
+d.addCallback(callback)
+d.callback('Here is your result.')
+print "Finished"
+
+import time
+time.sleep(10)
+print 'sleep 10s'
+
+#[root]# python defer-unhandled.py 
+#Finished
+#sleep 10s
+#Unhandled error in Deferred:
+
+```
+
+有几点注意：
+1. 最后一个print执行了，说明程序并没有因为 “未处理异常” 而崩溃  
+2. 其只是将跟踪栈打印出来，而没有宕掉解释器。
+3. 跟踪栈的内容告诉我deferred在何处捕获了异常
+4. unhandled 出现在 finish后面： **消息在deferred被垃圾回收的时候才会被打印出来**
+
+**同步代码我们可以使用raise来重新抛出异常而无需其它参数。 同样我们也可以在errback中这样做**  
+Deferred通过以下两点来判断callback errback是否执行成功。  
+1. callback errback raise 一个异常。
+2. callback errback 返回一个Failure对象。因为errback第一个参数就是Failure，因此一个errback可以在进行完其处理后可以再抛出这个Failure。
+
+1. callback errback 成对出现。
+2. 添加callback errback的顺序会决定这个deferred的整体运行情况。
+3. addcallbacks: 对  
+   addcallback:  callback  隐式的pass-through() 啥都不做，就是返回第一个参数。errback的第一个参数为Failure。 因此一个path-through的errback总是失败的。  
+   adderrback   
+   addboth   
+
+**总结：**
+经过这些对回调的考虑，发现由于回调式编程改变了低层代码与高层代码的关系，因此让回调产生的异常直接抛到栈中并不是件好事。  
+1. Deferred通过将异常捕获后将其顺着回调链传递来解决这个问题。 
+2. 原始数据（返回值）在链中被传递。  
+新场景：  
+根据每个stage收到的结果不同，deferred在callback与errback链中来回交错传递数据执行。  
 
 
+
+# 第十部分：增强defer功能的客户端
 
 
