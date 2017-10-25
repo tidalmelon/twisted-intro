@@ -113,6 +113,7 @@ def poetry_main():
         host, port = address
         d = get_poetry(host, port)
         # 第一个参数必须是成功的，或者err
+        #注意这里是callback=get_poem, errback=poem_failed
         d.addCallbacks(got_poem, poem_failed)
         d.addBoth(poem_done)
 

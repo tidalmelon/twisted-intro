@@ -759,8 +759,17 @@ get_poetry在中间：他知道要取诗歌， 但不知道得不到诗歌会发
 reactor低层：调用高层的代码，甚至有些严峻还会调用更高层的代码。因此一旦出现异常，它并不会被其附件（在调用栈中可触及）的代码捕获，当然附件的代码也不可能处理他。
             当然异常每向上传递一次，就越靠近低层那些更加不知道如何处理该异常的代码。一旦到了twisted核心代码，game is over，异常不会被处理，只是被记录下来。  
 因此我们以最原始的方式使用回调（不时deferred的形式），必须在其进入twisted之前正确的捕获每一个异常. 包含我们设计的异常（例如raise的）以及bug产生的。  
-**问题的提出：因为bug无处不在，因此我们需要在每个回调callback errback中放入try/except**
+**问题的提出：因为bug无处不在，因此我们需要在每个回调callback errback中放入try/except 如何解决？**
 
-**Deferred的优秀架构：解决**  
+**Deferred的优秀架构**   
+![2](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-deferred/deferred-2.png)  
+![31](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-deferred/deferred-31.png)  
+
+当一个deferred激活callback errback，它就会捕获各种由回调抛出的异常。换句话，deferred扮演了try/except模块。**这样我们deferred就无需自己来实现这一层了**  
+**那Deferred如何解决这个异常呢？**  
+**将异常传递给链上的下一个errback：即本次抛出的异常由下一层处理**
+
+第一个回调：来处理任何出错信息，信息是deferred的errback被调用时发出的.参看： [参看](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-4/get-poetry.py)  
+
 
 
