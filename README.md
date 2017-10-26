@@ -856,19 +856,19 @@ Deferred通过以下两点来判断callback errback是否执行成功。
 
 # 第十部分：增强defer功能的客户端
 
-![f19]https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-5/deferred-42-19.png)
+![f19](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-5/deferred-42-19.png)
 图-19
-![f20]https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-5/deferred-5-20.png)
+![f20](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-5/deferred-5-20.png)
 图-20
-![f21]https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-5/deferred-6-21.png)
+![f21](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-5/deferred-6-21.png)
 图-21
-![f22]https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-5/deferred-7-22.png)
+![f22](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-5/deferred-7-22.png)
 图-22
-![f23]https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-5/deferred-8-23.png)
+![f23](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-5/deferred-8-23.png)
 图-23
-![f24]https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-5/deferred-9-24.png)
+![f24](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-5/deferred-9-24.png)
 图-24
-![f25]https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-5/deferred-10-25.png)
+![f25](https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-5/deferred-10-25.png)
 图-25
 
 
