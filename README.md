@@ -856,6 +856,21 @@ Deferred通过以下两点来判断callback errback是否执行成功。
 
 # 第十部分：增强defer功能的客户端
 
-<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
-$$x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}$$\\(x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}\\)
+![f19]https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-5/deferred-42-19.png)
+图-19
+![f20]https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-5/deferred-5-20.png)
+图-20
+![f21]https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-5/deferred-6-21.png)
+图-21
+![f22]https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-5/deferred-7-22.png)
+图-22
+![f23]https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-5/deferred-8-23.png)
+图-23
+![f24]https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-5/deferred-9-24.png)
+图-24
+![f25]https://github.com/tidalmelon/twisted-intro/blob/master/twisted-client-5/deferred-10-25.png)
+图-25
+
+
+
 
